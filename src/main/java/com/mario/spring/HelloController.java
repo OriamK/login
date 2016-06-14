@@ -19,7 +19,7 @@ public class HelloController {
 	private MailSender mailSender;
 	
 	@Autowired
-	public HelloController(@Qualifier("smtpMailSender") MailSender mailSender) {
+	public HelloController(MailSender mailSender) {
 		this.mailSender = mailSender;
 	}
 	
