@@ -9,10 +9,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import ch.qos.logback.core.joran.spi.NoAutoStart;
 
 @SpringBootApplication
+@EnableTransactionManagement
 public class Application {
     
     public static void main(String[] args) {

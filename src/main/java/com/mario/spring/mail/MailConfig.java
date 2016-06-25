@@ -15,21 +15,21 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 @Configuration
 public class MailConfig {
 	
-	@Value("$mail.sender.host")
+	@Value("${mail.sender.host}")
 	private String host;
-	@Value("$mail.sender.username")
+	@Value("${smtp.authenticator.email}")
 	private String username;
-	@Value("$mail.sender.password")
+	@Value("${smtp.authenticator.password}")
 	private String password;
 
 	@Bean
-	@Profile("dev")
+	@Profile("!dev")
 	public MailSender mockMailSender() {
 		return new MockMailSender(); 
 	}
 	
 	@Bean
-	@Profile("!dev")
+	@Profile("dev")
 	public MailSender smtpMailSender() {
 		
 		SmtpMailSender mailSender = new SmtpMailSender();
@@ -46,7 +46,7 @@ public class MailConfig {
 		
 		sender.setHost(host);
 		sender.setSession(getMailSession());
-		return null;
+		return sender;
 	}
 
 	private Session getMailSession() {

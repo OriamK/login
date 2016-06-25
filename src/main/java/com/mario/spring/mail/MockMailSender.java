@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 
-public class MockMailSender implements MailSender{
+public class MockMailSender implements MailSender {
 
 	private static Logger logger = LoggerFactory.getLogger(MockMailSender.class);
 
