@@ -14,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import com.mario.spring.controller.RootController;
 import com.mario.spring.dto.SignupForm;
@@ -55,13 +57,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		userRepository.save(user);
 		
 		String verifyLink = MyUtil.hostUrl()+"users/"+user.getVerificationCode()+"/verify";
-		try {
-			mailSender.send(user.getEmail(), MyUtil.getMessage("verifySubject"), MyUtil.getMessage("verifyEmail",verifyLink));
-			logger.info("Verification mail to "+ user.getEmail()+" queued.");
-		} catch (MessagingException e) {
-			logger.error(ExceptionUtils.getStackTrace(e));			
-		}
 		
+		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+			
+			@Override
+			public void afterCommit() {
+				try {
+					mailSender.send(user.getEmail(), MyUtil.getMessage("verifySubject"), MyUtil.getMessage("verifyEmail",verifyLink));
+					logger.info("Verification mail to "+ user.getEmail()+" queued.");
+				} catch (MessagingException e) {
+					logger.error(ExceptionUtils.getStackTrace(e));			
+				}
+			}			
+		});
 		
 		
 		//int j= 20/0;
