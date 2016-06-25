@@ -7,7 +7,7 @@
 			<div class="col-md-12">
 				<div class="panel panel-primary">
 					<div class="panel-heading">
-						<h3 class="panel-title">Panel title</h3>
+						<h3 class="panel-title">Sign In</h3>
 					</div>
 					<div class="panel-body">
 						<c:if test="${param.error != null}">
@@ -40,7 +40,7 @@
 									</div>
 							
 							</div>							
-								<button type="submit" class="btn btn-default">Login</button>
+								<button type="submit" class="btn btn-default">Sign in</button>
 							</form:form>
 					</div>
 				</div>

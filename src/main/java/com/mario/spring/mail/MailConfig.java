@@ -23,13 +23,13 @@ public class MailConfig {
 	private String password;
 
 	@Bean
-	@Profile("!dev")
+	@Profile("dev")
 	public MailSender mockMailSender() {
 		return new MockMailSender(); 
 	}
 	
 	@Bean
-	@Profile("dev")
+	@Profile("!dev")
 	public MailSender smtpMailSender() {
 		
 		SmtpMailSender mailSender = new SmtpMailSender();

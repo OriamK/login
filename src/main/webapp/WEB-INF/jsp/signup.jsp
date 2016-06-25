@@ -10,7 +10,7 @@
       
         <div class="panel panel-primary">
           <div class="panel-heading">
-            <h3 class="panel-title">Panel title</h3>
+            <h3 class="panel-title">Sign Up</h3>
           </div>
           
           <div class="panel-body">
@@ -30,7 +30,7 @@
                 <form:input path="password" class="form-control" placeholder="Password" type="password"/>
                 <form:errors path="password" cssClass="text-danger"/>
               </div>
-              <button type="submit" class="btn btn-default">Sign in</button>
+              <button type="submit" class="btn btn-default">Sign up</button>
             </form:form>
           </div>
         </div>
