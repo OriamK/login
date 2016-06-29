@@ -1,13 +1,13 @@
 
 <%@include file="include/header.jsp"%>
 
-<div class="section">
+<div class="section"  style="margin-top: 150px">
 	<div class="container">
 		<div class="row">
-			<div class="col-md-12">
+			<div class="col-md-4 col-md-offset-4">
 				<div class="panel panel-primary">
 					<div class="panel-heading">
-						<h3 class="panel-title">Sign In</h3>
+						<h3 class="panel-title"><spring:message code="signin" /></h3>
 					</div>
 					<div class="panel-body">
 						<c:if test="${param.error != null}">
@@ -20,16 +20,15 @@
 						</c:if>
 						<form:form role="form" method="post">
 							<div class="form-group">
-								<label class="control-label">Email address</label> <input
+								<label class="control-label"><spring:message code="email" /></label> <input
 									name="username" class="form-control" id="username"
-									placeholder="Enter email" type="email" />
-								<p class="help-block">Enter your email address</p>
+									type="email" />
+							<!-- 	<p class="help-block">Ingresa tu direccion de correo</p> -->
 							</div>
 							<div class="form-group">
-								<label class="control-label">Password</label> <input
-									class="form-control" name="password" id="password"
-									placeholder="Password" type="password" />
-								<p class="help-block">Enter your password</p>
+								<label class="control-label"><spring:message code="password"/></label> <input
+									class="form-control" name="password" id="password" type="password" />
+								<!-- <p class="help-block">Ingresa tu contraseña</p> -->
 								<form:errors cssClass="text-danger" path="password" />
 							</div>
 							<div class="form-group">								
@@ -40,7 +39,7 @@
 									</div>
 							
 							</div>							
-								<button type="submit" class="btn btn-default">Sign in</button>
+								<button type="submit" class="btn btn-default"><spring:message code="signin" /></button>
 							</form:form>
 					</div>
 				</div>

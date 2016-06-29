@@ -35,7 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		TokenBasedRememberMeServices rememberMeServices = new TokenBasedRememberMeServices(rememberMeKey, userService);
 		
 		return rememberMeServices;
-	};
+	}
 	
 	
 	@Bean
@@ -43,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		
 		logger.info("Creatin password encoder bean");		
 		return new BCryptPasswordEncoder();		
-	};
+	}
 	
 	
 	@Override

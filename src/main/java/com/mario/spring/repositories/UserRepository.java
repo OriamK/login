@@ -16,7 +16,8 @@ import com.mario.spring.entities.User;
 public interface UserRepository extends JpaRepository<User, Long>{
 
 	//@Query("select u from user where u.email = ?1")
-	User findByEmail(String email);
+	User findByEmail(String email);	
+	
 	
 }
 

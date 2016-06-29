@@ -1,5 +1,7 @@
 package com.mario.spring.services;
 
+import java.util.List;
+
 import javax.mail.MessagingException;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -7,6 +9,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -55,8 +58,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.getRoles().add(Role.UNVERIFIED);
 		user.setVerificationCode(RandomStringUtils.randomAlphanumeric(16));
 		userRepository.save(user);
-		
-		String verifyLink = MyUtil.hostUrl()+"users/"+user.getVerificationCode()+"/verify";
+		logger.info(user.toString());
+		String verifyLink = MyUtil.hostUrl()+"/users/"+user.getVerificationCode()+"/verify";
 		
 		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 			
@@ -70,29 +73,54 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 				}
 			}			
 		});
-		
-		
-		//int j= 20/0;
-		
+		//int j= 20/0;		
 	}
+	
+	@Override
+	public List<User> selectAll() {
+		
+		return userRepository.findAll();
+	}
+	
+//	@Override
+//	public void delete(int id) {
+//		
+//		userRepository.delete((long) id);
+//	}
 
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED,readOnly=false)
+	public void verify(String verificationCode) {
+		
+		long loggedInUserId = MyUtil.getSessionUser().getId();
+		User user = userRepository.findOne(loggedInUserId);
+		
+		MyUtil.validate(user.getRoles().contains(Role.UNVERIFIED),"alreadyVerified");
+		MyUtil.validate(user.getVerificationCode().equals(verificationCode),"incorrect","verification code");
+		
+		user.getRoles().remove(Role.UNVERIFIED);
+		user.setVerificationCode(null);
+		userRepository.save(user);
+	}
+	
 	@Override
 	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException {
 		
-		System.out.println("username12" +username);
-		
 		User user = userRepository.findByEmail(username);
 		System.out.println(user);
-		if(user == null) {
-				System.out.println("No encontrado");
+		if(user == null) {		
 			throw new UsernameNotFoundException(username);
 			
 		}		
 		return new UserDetailsImpl(user);
 	}
 
-	
+
+
+
+
+
 	
 	
 }

@@ -23,10 +23,9 @@ public class User {
 	public static final int NAME_MAX = 50;
 
 	public static enum Role {
-
 		UNVERIFIED, BLOCKED, ADMIN
 	}
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;

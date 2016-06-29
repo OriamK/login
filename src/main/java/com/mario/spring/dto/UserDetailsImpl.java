@@ -36,8 +36,7 @@ public class UserDetailsImpl implements UserDetails {
 	
 		Collection<GrantedAuthority> authorities = new HashSet<GrantedAuthority>(1);
 		authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-		return authorities;		
-
+		return authorities;
 	}
 
 	@Override

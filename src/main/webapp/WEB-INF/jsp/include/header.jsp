@@ -15,8 +15,8 @@
 </head>
 <body>
 
-	<nav class="navbar navbar-default">
-	<div class="container-fluid">
+	<nav class="navbar navbar-default navbar-inverse">
+	<div class="container">
 		<!-- Brand and toggle get grouped for better mobile display -->
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle collapsed"
@@ -26,7 +26,7 @@
 					class="icon-bar"></span> <span class="icon-bar"></span> <span
 					class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="<c:url value='/'/>">Home</a>
+			<a class="navbar-brand" href="<c:url value='/'/>"><spring:message code="home" /></a>
 		</div>
 
 		<!-- Collect the nav links, forms, and other content for toggling -->
@@ -47,18 +47,12 @@
 						<li role="separator" class="divider"></li>
 						<li><a href="#">One more separated link</a></li>
 					</ul></li>
-			</ul>
-			<form class="navbar-form navbar-left" role="search">
-				<div class="form-group">
-					<input type="text" class="form-control" placeholder="Search">
-				</div>
-				<button type="submit" class="btn btn-default">Submit</button>
-			</form>
-			<ul class="nav navbar-nav navbar-right">
+			</ul>			
+			<ul class="nav navbar-nav navbar-right">			
 				<sec:authorize access="isAnonymous()">
-
-					<li><a href='<c:url value="/signup"/>'> <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> Sign up</a></li>  
-					<li><a href="/login"> <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Sign in</a></li> 
+					<li><a href='<c:url value="/signup"/>'> <span class="glyphicon glyphicon-list-alt" aria-hidden="true"> </span> <spring:message code="signup"/></a></li>  
+					<li><a href="/login"> <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> <spring:message code="signin" /></a></li> 
+		
 				</sec:authorize>
 				<sec:authorize access="isAuthenticated()">
 				<li class="dropdown"><a href="#" class="dropdown-toggle"
@@ -68,19 +62,25 @@
 							<%-- principal = userDetailsImpl --%><span class="caret"></span>
 				</a>
 					<ul class="dropdown-menu">
-<%-- 						<li><a href="/user/<sec:authentication --%>
-<%-- 							property="principal.user.id" />"> <span class="glyphicon glyphicon-user" aria-hidden="true"></span> Profile</a></li> --%>
+						<li><a href="/admin"> <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Administrador</a></li> 
+						<li><a href="/user/<sec:authentication
+							property="principal.user.id" />"> <span class="glyphicon glyphicon-user" aria-hidden="true"></span> Cuenta</a></li>
 						<li><c:url var="logoutUrl" value="/logout" /> <form:form
 								id="logoutForm" action="${logoutUrl}" method="post"></form:form>
 							<a href="#"
 							onclick="document.getElementById('logoutForm').submit()"> 
 							<span class="glyphicon glyphicon-log-out" aria-hidden="true">
-							</span> Sign out</a></li>			
-						
+							</span> Sign out</a></li>									
 					</ul>
 				</li>
 				</sec:authorize>
 			</ul>
+			<form class="navbar-form navbar-right" role="search">
+				<div class="form-group">
+					<input type="text" class="form-control" placeholder="Search">
+				</div>
+				<button type="submit" class="btn btn-default">Submit</button>
+			</form>
 		</div>
 		<!-- /.navbar-collapse -->
 	</div>
