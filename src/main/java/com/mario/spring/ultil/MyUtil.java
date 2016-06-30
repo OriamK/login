@@ -2,6 +2,8 @@ package com.mario.spring.ultil;
 
 import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -10,12 +12,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.mario.spring.controller.RootController;
 import com.mario.spring.dto.UserDetailsImpl;
 import com.mario.spring.entities.User;
 
 @Component
 public class MyUtil {
-
+	
+	private static Logger logger = LoggerFactory
+			.getLogger(MyUtil.class);
 	private static MessageSource messageSource;
 
 	@Autowired
@@ -71,7 +76,9 @@ public class MyUtil {
 	public static User getSessionUser() {
 		
 		UserDetailsImpl auth = getAuth();
-				
+		
+		logger.info("Obteniendo autentificacion");
+		
 		return auth == null ? null : auth.getUser();
 	}
 	

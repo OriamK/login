@@ -19,6 +19,7 @@
 								been logged out</div>
 						</c:if>
 						<form:form role="form" method="post">
+								
 							<div class="form-group">
 								<label class="control-label"><spring:message code="email" /></label> <input
 									name="username" class="form-control" id="username"
@@ -40,6 +41,7 @@
 							
 							</div>							
 								<button type="submit" class="btn btn-default"><spring:message code="signin" /></button>
+								<a href="/forgot-password" class="btn btn-default">Forgot password</a>
 							</form:form>
 					</div>
 				</div>

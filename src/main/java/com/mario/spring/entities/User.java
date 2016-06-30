@@ -16,11 +16,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
 @Entity
-@Table(indexes = { @Index(columnList = "email", unique = true) })
+@Table(indexes = { 
+		@Index(columnList = "email", unique = true),
+		@Index(columnList = "forgotPasswordCode" ,unique = true)
+	})
 public class User {
 
 	public static final int EMAIL_MAX = 250;
 	public static final int NAME_MAX = 50;
+	public static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+	public static final int RANDOM_CODE_LENGTH = 16;
 
 	public static enum Role {
 		UNVERIFIED, BLOCKED, ADMIN
@@ -41,6 +46,9 @@ public class User {
 
 	@Column(length = 16)
 	private String verificationCode;
+	
+	@Column(length = RANDOM_CODE_LENGTH)
+	private String forgotPasswordCode;
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(joinColumns=@JoinColumn(name="id"))
@@ -94,4 +102,11 @@ public class User {
 		this.password = password;
 	}
 
+	public void setForgotPasswordCode(String forgotPasswordCode) {
+		this.forgotPasswordCode = forgotPasswordCode;
+	}
+	
+	public String getForgotPasswordCode() {
+		return forgotPasswordCode;
+	}
 }

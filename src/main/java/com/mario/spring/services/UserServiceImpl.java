@@ -21,6 +21,7 @@ import org.springframework.transaction.support.TransactionSynchronizationAdapter
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import com.mario.spring.controller.RootController;
+import com.mario.spring.dto.ForgotPasswordForm;
 import com.mario.spring.dto.SignupForm;
 import com.mario.spring.dto.UserDetailsImpl;
 import com.mario.spring.entities.User;
@@ -30,27 +31,28 @@ import com.mario.spring.repositories.UserRepository;
 import com.mario.spring.ultil.MyUtil;
 
 @Service
-@Transactional(propagation=Propagation.SUPPORTS,readOnly=true)
+@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 public class UserServiceImpl implements UserService, UserDetailsService {
 
-	private static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class); 
-	
+	private static Logger logger = LoggerFactory
+			.getLogger(UserServiceImpl.class);
+
 	private UserRepository userRepository;
 	private PasswordEncoder passwordEncoder;
 	private MailSender mailSender;
-	
+
 	@Autowired
-	public UserServiceImpl(UserRepository userRepository,PasswordEncoder passwordEncoder,MailSender mailSender) {
+	public UserServiceImpl(UserRepository userRepository,
+			PasswordEncoder passwordEncoder, MailSender mailSender) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.mailSender = mailSender;
 	}
-	
-	
+
 	@Override
-	@Transactional(propagation=Propagation.REQUIRED,readOnly=false)
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public void signup(SignupForm signupForm) {
-	
+
 		User user = new User();
 		user.setEmail(signupForm.getEmail());
 		user.setName(signupForm.getName());
@@ -59,68 +61,101 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.setVerificationCode(RandomStringUtils.randomAlphanumeric(16));
 		userRepository.save(user);
 		logger.info(user.toString());
-		String verifyLink = MyUtil.hostUrl()+"/users/"+user.getVerificationCode()+"/verify";
-		
-		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-			
-			@Override
-			public void afterCommit() {
-				try {
-					mailSender.send(user.getEmail(), MyUtil.getMessage("verifySubject"), MyUtil.getMessage("verifyEmail",verifyLink));
-					logger.info("Verification mail to "+ user.getEmail()+" queued.");
-				} catch (MessagingException e) {
-					logger.error(ExceptionUtils.getStackTrace(e));			
-				}
-			}			
-		});
-		//int j= 20/0;		
+		String verifyLink = MyUtil.hostUrl() + "/users/"
+				+ user.getVerificationCode() + "/verify";
+
+		TransactionSynchronizationManager
+				.registerSynchronization(new TransactionSynchronizationAdapter() {
+
+					@Override
+					public void afterCommit() {
+						try {
+							mailSender.send(user.getEmail(), MyUtil
+									.getMessage("verifySubject"), MyUtil
+									.getMessage("verifyEmail", verifyLink));
+							logger.info("Verification mail to "
+									+ user.getEmail() + " queued.");
+						} catch (MessagingException e) {
+							logger.error(ExceptionUtils.getStackTrace(e));
+						}
+					}
+				});
+		// int j= 20/0;
 	}
-	
-	@Override
-	public List<User> selectAll() {
-		
-		return userRepository.findAll();
-	}
-	
-//	@Override
-//	public void delete(int id) {
-//		
-//		userRepository.delete((long) id);
-//	}
 
 	@Override
-	@Transactional(propagation=Propagation.REQUIRED,readOnly=false)
+	public List<User> selectAll() {
+
+		return userRepository.findAll();
+	}
+
+	// @Override
+	// public void delete(int id) {
+	//
+	// userRepository.delete((long) id);
+	// }
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public void verify(String verificationCode) {
-		
+
 		long loggedInUserId = MyUtil.getSessionUser().getId();
 		User user = userRepository.findOne(loggedInUserId);
-		
-		MyUtil.validate(user.getRoles().contains(Role.UNVERIFIED),"alreadyVerified");
-		MyUtil.validate(user.getVerificationCode().equals(verificationCode),"incorrect","verification code");
-		
+
+		MyUtil.validate(user.getRoles().contains(Role.UNVERIFIED),
+				"alreadyVerified");
+		MyUtil.validate(user.getVerificationCode().equals(verificationCode),
+				"incorrect", "verification code");
+
 		user.getRoles().remove(Role.UNVERIFIED);
 		user.setVerificationCode(null);
 		userRepository.save(user);
 	}
-	
+
 	@Override
 	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException {
-		
+
 		User user = userRepository.findByEmail(username);
 		System.out.println(user);
-		if(user == null) {		
+		if (user == null) {
 			throw new UsernameNotFoundException(username);
-			
-		}		
+
+		}
 		return new UserDetailsImpl(user);
 	}
 
+	@Override
+	public void forgotPassword(ForgotPasswordForm forgotPasswordForm) {
+		
+		User user = userRepository.findByEmail(forgotPasswordForm.getEmail());
+		String forgotPasswordCode = RandomStringUtils.randomAlphanumeric(User.RANDOM_CODE_LENGTH);
+		
+		user.setForgotPasswordCode(forgotPasswordCode);
+		
+		User savedUser = userRepository.save(user);
+		
+TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+			
+			@Override
+			public void afterCommit() {
+				try {
+					mailForgotPasswordLink(savedUser);
+					logger.info("Verification mail to "+ user.getEmail()+" queued.");
+				} catch (MessagingException e) {
+					logger.error(ExceptionUtils.getStackTrace(e));			
+				}
+			}
+		});
+		
+		
+	}
 
-
-
-
-
-	
-	
+	private void mailForgotPasswordLink(User user) throws MessagingException {
+		
+		String forgotPasswordLink = MyUtil.hostUrl() + "/reset-password/"+user.getForgotPasswordCode();
+		mailSender.send(user.getEmail(), MyUtil.getMessage("forgotPasswordSubject"),
+									MyUtil.getMessage("forgotPasswordEmail", forgotPasswordLink));
+		
+	}
 }

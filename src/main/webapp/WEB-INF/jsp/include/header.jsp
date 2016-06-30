@@ -85,6 +85,13 @@
 		<!-- /.navbar-collapse -->
 	</div>
 	<!-- /.container-fluid --> </nav>
+	
+	<sec:authorize access="hasRole('ROLE_UNVERIFIED')">
+		<div class="alert alert-dismissable alert-warning">
+			Your email is unverified. <a href="users/resend-verification-email"> Click here</a>
+		</div>
+	</sec:authorize>
+	
 
 	<c:if test="${not empty flashMessage}">
 		<div class="section">

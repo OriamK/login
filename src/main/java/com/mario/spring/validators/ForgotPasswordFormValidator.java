@@ -9,15 +9,16 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import com.mario.spring.controller.RootController;
+import com.mario.spring.dto.ForgotPasswordForm;
 import com.mario.spring.dto.SignupForm;
 import com.mario.spring.entities.User;
 import com.mario.spring.repositories.UserRepository;
 
 @Component
-public class SignupFormValidator extends LocalValidatorFactoryBean {
+public class ForgotPasswordFormValidator extends LocalValidatorFactoryBean {
 
 	private static Logger logger = LoggerFactory
-			.getLogger(SignupFormValidator.class);
+			.getLogger(ForgotPasswordFormValidator.class);
 	
 	UserRepository userRepository;
 	
@@ -30,7 +31,7 @@ public class SignupFormValidator extends LocalValidatorFactoryBean {
 	@Override
 	public boolean supports(Class<?> clazz) {
 		// TODO Auto-generated method stub
-		return clazz.isAssignableFrom(SignupForm.class);
+		return clazz.isAssignableFrom(ForgotPasswordForm.class);
 	}
 	
 	@Override
@@ -41,12 +42,12 @@ public class SignupFormValidator extends LocalValidatorFactoryBean {
 		
 		if(!errors.hasErrors()) {
 			
-			SignupForm signupForm = (SignupForm) target;
+			ForgotPasswordForm forgotPasswordForm = (ForgotPasswordForm) target;
 			
-			User user = userRepository.findByEmail(signupForm.getEmail());
-			logger.info("Validando el email...");
-			if(user != null) {
-				errors.rejectValue("email", "emailNotUnique");
+			User user = userRepository.findByEmail(forgotPasswordForm.getEmail());
+			logger.info("Validando el email... " + user);
+			if(user == null) {
+				errors.rejectValue("email", "notFound");
 			}
 			
 		}

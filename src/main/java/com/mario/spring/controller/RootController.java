@@ -16,12 +16,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mario.spring.dto.ForgotPasswordForm;
 import com.mario.spring.dto.SignupForm;
 import com.mario.spring.entities.User;
 import com.mario.spring.mail.MailSender;
 import com.mario.spring.mail.SmtpMailSender;
 import com.mario.spring.services.UserService;
 import com.mario.spring.ultil.MyUtil;
+import com.mario.spring.validators.ForgotPasswordFormValidator;
 import com.mario.spring.validators.SignupFormValidator;
 
 import javax.annotation.Resource;
@@ -46,18 +48,25 @@ public class RootController {
 	private MailSender mailSender;
 	private UserService userService;
 	private SignupFormValidator signupFormValidator;
+	private ForgotPasswordFormValidator forgotPasswordFormValidator;
 
 	@Autowired
 	public RootController(MailSender mailSender, UserService userService,
-			SignupFormValidator signupFormValidator) {
+			SignupFormValidator signupFormValidator,ForgotPasswordFormValidator forgotPasswordFormValidator) {
 		this.mailSender = mailSender;
 		this.userService = userService;
 		this.signupFormValidator = signupFormValidator;
+		this.forgotPasswordFormValidator = forgotPasswordFormValidator;
 	}
 
 	@InitBinder("signupForm")
 	protected void initSignupBinder(WebDataBinder binder) {
 		binder.setValidator(signupFormValidator);
+	}
+	
+	@InitBinder("forgotPasswordForm")
+	protected void initForgotPasswordBinder(WebDataBinder binder) {
+		binder.setValidator(forgotPasswordFormValidator);
 	}
 
 	// @RequestMapping("/")
@@ -109,5 +118,27 @@ public class RootController {
 
 		return "redirect:/";
 	}
+	
+	@RequestMapping(value = "/forgot-password", method = RequestMethod.GET)
+	public String forgotPassword(Model model) {
+
+		model.addAttribute(new ForgotPasswordForm());
+		return "forgot-password";
+	}
+	
+	@RequestMapping(value = "/forgot-password", method = RequestMethod.POST)
+	public String forgotPassword(@ModelAttribute("forgotPasswordForm") @Valid ForgotPasswordForm forgotPasswordForm,
+						BindingResult result,RedirectAttributes redirectAttributes) {
+
+		if(result.hasErrors()) {
+			return "forgot-password";			
+		}
+		
+		userService.forgotPassword(forgotPasswordForm);
+		MyUtil.flash(redirectAttributes, "info", "checkMailResetPassword");
+		
+		return "redirect:/";
+	}
+	
 
 }

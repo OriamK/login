@@ -4,11 +4,13 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.mario.spring.entities.User;
+
 public class SignupForm {
 
 	@NotNull
 	@Size(min=1, max=255)
-	@Pattern(regexp="^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$",
+	@Pattern(regexp=User.EMAIL_PATTERN,
 				message="{emailPatternError}")
 	private String email;
 	
