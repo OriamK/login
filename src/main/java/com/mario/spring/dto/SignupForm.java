@@ -19,7 +19,7 @@ public class SignupForm {
 	private String name;
 	
 	@NotNull
-	@Size(min=1, max=30)
+	@Size(min=1, max=User.PASSWORD_MAX)
 	private String password;
 	
 	public String getEmail() {

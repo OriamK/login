@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mario.spring.dto.ForgotPasswordForm;
+import com.mario.spring.dto.ResetPasswordForm;
 import com.mario.spring.dto.SignupForm;
 import com.mario.spring.entities.User;
 import com.mario.spring.mail.MailSender;
@@ -24,6 +25,7 @@ import com.mario.spring.mail.SmtpMailSender;
 import com.mario.spring.services.UserService;
 import com.mario.spring.ultil.MyUtil;
 import com.mario.spring.validators.ForgotPasswordFormValidator;
+import com.mario.spring.validators.ResetPasswordFormValidator;
 import com.mario.spring.validators.SignupFormValidator;
 
 import javax.annotation.Resource;
@@ -49,14 +51,17 @@ public class RootController {
 	private UserService userService;
 	private SignupFormValidator signupFormValidator;
 	private ForgotPasswordFormValidator forgotPasswordFormValidator;
-
+	private ResetPasswordFormValidator resetPasswordFormValidator;
+	
 	@Autowired
 	public RootController(MailSender mailSender, UserService userService,
-			SignupFormValidator signupFormValidator,ForgotPasswordFormValidator forgotPasswordFormValidator) {
+			SignupFormValidator signupFormValidator,ForgotPasswordFormValidator forgotPasswordFormValidator,
+			ResetPasswordFormValidator resetPasswordFormValidator) {
 		this.mailSender = mailSender;
 		this.userService = userService;
 		this.signupFormValidator = signupFormValidator;
 		this.forgotPasswordFormValidator = forgotPasswordFormValidator;
+		this.resetPasswordFormValidator = resetPasswordFormValidator;
 	}
 
 	@InitBinder("signupForm")
@@ -67,6 +72,11 @@ public class RootController {
 	@InitBinder("forgotPasswordForm")
 	protected void initForgotPasswordBinder(WebDataBinder binder) {
 		binder.setValidator(forgotPasswordFormValidator);
+	}
+	
+	@InitBinder("resetPasswordForm")
+	protected void initResetPasswordBinder(WebDataBinder binder) {
+		binder.setValidator(resetPasswordFormValidator);
 	}
 
 	// @RequestMapping("/")
@@ -139,6 +149,32 @@ public class RootController {
 		
 		return "redirect:/";
 	}
+	
+	@RequestMapping(value="/reset-password/{forgotPasswordCode}")
+	public String resetPassword(Model model, @PathVariable("forgotPasswordCode") String forgotPasswordCode) {
+		
+		model.addAttribute(new ResetPasswordForm());
+		
+		return "reset-password";		
+	}
+	
+	@RequestMapping(value="/reset-password/{forgotPasswordCode}",method=RequestMethod.POST)
+	public String resetPassword(@PathVariable("forgotPasswordCode") String forgotPasswordCode,
+											@ModelAttribute("resetPasswordForm") @Valid ResetPasswordForm resetPasswordForm,
+											BindingResult result,	RedirectAttributes redirectAttributes) {
+		
+		userService.resetPassword(forgotPasswordCode, resetPasswordForm, result);
+		
+		if(result.hasErrors()) {
+			return "reset-password";
+		}
+		
+		MyUtil.flash(redirectAttributes, "success", "passwordChanged");
+		
+		return "redirect:/login";		
+	}
+	
+	
 	
 
 }

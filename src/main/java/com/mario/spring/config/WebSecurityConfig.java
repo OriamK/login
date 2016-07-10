@@ -63,7 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth)
 			throws Exception {
-	
+		logger.info("Creando bean para la autentificacion");
 		auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
 		
 	}

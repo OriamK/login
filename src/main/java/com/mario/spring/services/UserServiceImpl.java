@@ -19,9 +19,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.validation.BindingResult;
 
 import com.mario.spring.controller.RootController;
 import com.mario.spring.dto.ForgotPasswordForm;
+import com.mario.spring.dto.ResetPasswordForm;
 import com.mario.spring.dto.SignupForm;
 import com.mario.spring.dto.UserDetailsImpl;
 import com.mario.spring.entities.User;
@@ -117,45 +119,71 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			throws UsernameNotFoundException {
 
 		User user = userRepository.findByEmail(username);
-		System.out.println(user);
+		logger.info("Usuario " +user);
 		if (user == null) {
 			throw new UsernameNotFoundException(username);
-
 		}
+	
 		return new UserDetailsImpl(user);
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 	public void forgotPassword(ForgotPasswordForm forgotPasswordForm) {
-		
+
 		User user = userRepository.findByEmail(forgotPasswordForm.getEmail());
-		String forgotPasswordCode = RandomStringUtils.randomAlphanumeric(User.RANDOM_CODE_LENGTH);
-		
+		String forgotPasswordCode = RandomStringUtils
+				.randomAlphanumeric(User.RANDOM_CODE_LENGTH);
+
 		user.setForgotPasswordCode(forgotPasswordCode);
-		
+
 		User savedUser = userRepository.save(user);
-		
-TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-			
-			@Override
-			public void afterCommit() {
-				try {
-					mailForgotPasswordLink(savedUser);
-					logger.info("Verification mail to "+ user.getEmail()+" queued.");
-				} catch (MessagingException e) {
-					logger.error(ExceptionUtils.getStackTrace(e));			
-				}
-			}
-		});
-		
-		
+
+		TransactionSynchronizationManager
+				.registerSynchronization(new TransactionSynchronizationAdapter() {
+
+					@Override
+					public void afterCommit() {
+						try {
+							mailForgotPasswordLink(savedUser);
+							logger.info("Verification mail to "
+									+ user.getEmail() + " queued.");
+						} catch (MessagingException e) {
+							logger.error(ExceptionUtils.getStackTrace(e));
+						}
+					}
+				});
+
 	}
 
 	private void mailForgotPasswordLink(User user) throws MessagingException {
-		
-		String forgotPasswordLink = MyUtil.hostUrl() + "/reset-password/"+user.getForgotPasswordCode();
-		mailSender.send(user.getEmail(), MyUtil.getMessage("forgotPasswordSubject"),
-									MyUtil.getMessage("forgotPasswordEmail", forgotPasswordLink));
-		
+
+		String forgotPasswordLink = MyUtil.hostUrl() + "/reset-password/"
+				+ user.getForgotPasswordCode();
+		mailSender.send(user.getEmail(),
+				MyUtil.getMessage("forgotPasswordSubject"),
+				MyUtil.getMessage("forgotPasswordEmail", forgotPasswordLink));
+
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+	public void resetPassword(String forgotPasswordCode,
+			ResetPasswordForm resetPasswordForm, BindingResult result) {
+
+		User user = userRepository.findByForgotPasswordCode(forgotPasswordCode);
+
+		if (user == null) {
+
+			result.reject("invalidForgotPassword");
+		}
+
+		if (result.hasErrors())
+			return;
+
+		user.setForgotPasswordCode(null);
+		user.setPassword(passwordEncoder.encode(resetPasswordForm.getPassword()
+				.trim()));
+		userRepository.save(user);
 	}
 }

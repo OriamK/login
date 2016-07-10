@@ -20,7 +20,7 @@
 
 							<div class="form-group">
 								<form:label path="email" class="control-label">Email address</form:label>
-								<form:input path="email" name="username" class="form-control"	type="email" />
+								<form:input path="email" class="form-control"	type="email" />
 								<form:errors path="email" cssClass="text-danger"/>
 							</div>
 					

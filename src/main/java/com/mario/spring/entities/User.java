@@ -26,6 +26,7 @@ public class User {
 	public static final int NAME_MAX = 50;
 	public static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	public static final int RANDOM_CODE_LENGTH = 16;
+	public static final int PASSWORD_MAX = 30;
 
 	public static enum Role {
 		UNVERIFIED, BLOCKED, ADMIN
@@ -41,7 +42,7 @@ public class User {
 	@Column(nullable = false, length = NAME_MAX)
 	private String name;
 
-	@Column(nullable = false)
+	@Column(nullable = false,length=PASSWORD_MAX)
 	private String password;
 
 	@Column(length = 16)
