@@ -15,7 +15,7 @@ public class SignupForm {
 	private String email;
 	
 	@NotNull
-	@Size(min=1, max=100,message="{nameSizeError}")
+	@Size(min=1, max=User.NAME_MAX,message="{nameSizeError}")
 	private String name;
 	
 	@NotNull

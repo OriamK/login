@@ -26,6 +26,7 @@ import com.mario.spring.dto.ForgotPasswordForm;
 import com.mario.spring.dto.ResetPasswordForm;
 import com.mario.spring.dto.SignupForm;
 import com.mario.spring.dto.UserDetailsImpl;
+import com.mario.spring.dto.UserEditForm;
 import com.mario.spring.entities.User;
 import com.mario.spring.entities.User.Role;
 import com.mario.spring.mail.MailSender;
@@ -119,11 +120,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			throws UsernameNotFoundException {
 
 		User user = userRepository.findByEmail(username);
-		logger.info("Usuario " +user);
+		logger.info("Usuario " + user);
 		if (user == null) {
 			throw new UsernameNotFoundException(username);
 		}
-	
+
 		return new UserDetailsImpl(user);
 	}
 
@@ -189,20 +190,39 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public User findOne(long userId) {
-		
+
 		User loggedIn = MyUtil.getSessionUser();
-		
+
 		User user = userRepository.findOne(userId);
-		
+
 		logger.info("LOGEADO: " + loggedIn);
 		logger.info("encontrado: " + user);
-		
-		if(loggedIn == null || loggedIn.getId() != user.getId() && !loggedIn.isAdmin()) {
-			
+
+		if (loggedIn == null || loggedIn.getId() != user.getId()
+				&& !loggedIn.isAdmin()) {
+
 			user.setEmail("Confidential");
 		}
-		
+
 		return user;
-	
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+	public void update(long userId, UserEditForm userEditForm) {
+		
+		User loggedIn = MyUtil.getSessionUser();
+		MyUtil.validate(loggedIn.isAdmin() || loggedIn.getId()==userId, "noPermissions");
+		
+		User user = userRepository.findOne(userId);
+		user.setName(userEditForm.getName());
+		
+		if(loggedIn.isAdmin()) {
+			user.setRoles(userEditForm.getRoles());
+		}
+		
+		userRepository.save(user);
+		
+
 	}
 }

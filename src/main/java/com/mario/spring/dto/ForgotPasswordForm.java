@@ -10,7 +10,7 @@ public class ForgotPasswordForm {
 	
 	@NotNull
 	@Size(min = 1, max = User.EMAIL_MAX, message = "{emailSizeError}")
-	@Pattern(regexp = User.EMAIL_PATTERN, message = "{emailPatternError")
+	@Pattern(regexp = User.EMAIL_PATTERN, message = "{emailPatternError}")
 	private String email;
 
 	public String getEmail() {

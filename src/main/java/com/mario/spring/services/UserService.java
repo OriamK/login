@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import com.mario.spring.dto.ForgotPasswordForm;
 import com.mario.spring.dto.ResetPasswordForm;
 import com.mario.spring.dto.SignupForm;
+import com.mario.spring.dto.UserEditForm;
 import com.mario.spring.entities.User;
 
 
@@ -28,5 +29,7 @@ public interface UserService {
 			ResetPasswordForm resetPasswordForm, BindingResult result);
 
 	public User findOne(long userId);
+
+	public void update(long userId, UserEditForm userEditForm);
 	
 }
