@@ -15,11 +15,11 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 @Configuration
 public class MailConfig {
 	
-	@Value("${mail.sender.host}")
+	@Value("${spring.mail.host}")
 	private String host;
-	@Value("${smtp.authenticator.email}")
+	@Value("${spring.mail.username}")
 	private String username;
-	@Value("${smtp.authenticator.password}")
+	@Value("${spring.mail.password}")
 	private String password;
 
 	@Bean
