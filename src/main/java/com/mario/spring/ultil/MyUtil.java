@@ -45,7 +45,7 @@ public class MyUtil {
 	}
 
 	public static String hostUrl() {
-		return (isDev() ? "http://" : "https://") + hostAndPort;
+		return (isDev() ? "http://" : "http://") + hostAndPort;
 	}
 
 	private static String activeProfiles;
