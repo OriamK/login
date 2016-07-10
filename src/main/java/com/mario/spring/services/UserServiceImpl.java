@@ -186,4 +186,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 				.trim()));
 		userRepository.save(user);
 	}
+
+	@Override
+	public User findOne(long userId) {
+		
+		User loggedIn = MyUtil.getSessionUser();
+		
+		User user = userRepository.findOne(userId);
+		
+		logger.info("LOGEADO: " + loggedIn);
+		logger.info("encontrado: " + user);
+		
+		if(loggedIn == null || loggedIn.getId() != user.getId() && !loggedIn.isAdmin()) {
+			
+			user.setEmail("Confidential");
+		}
+		
+		return user;
+	
+	}
 }

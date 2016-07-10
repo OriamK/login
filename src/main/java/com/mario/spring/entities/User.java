@@ -15,6 +15,8 @@ import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
+import com.mario.spring.ultil.MyUtil;
+
 @Entity
 @Table(indexes = { 
 		@Index(columnList = "email", unique = true),
@@ -110,4 +112,20 @@ public class User {
 	public String getForgotPasswordCode() {
 		return forgotPasswordCode;
 	}
+
+	public boolean isAdmin() {
+		
+		return roles.contains(Role.ADMIN);
+	}
+	
+	public boolean isEditable() {
+		
+		User loggedIn = MyUtil.getSessionUser();
+		
+		if(loggedIn == null) return false;
+		
+		return loggedIn.isAdmin() || loggedIn.getId() == id;
+		
+	}
+	
 }

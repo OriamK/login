@@ -26,5 +26,7 @@ public interface UserService {
 
 	public void resetPassword(String forgotPasswordCode,
 			ResetPasswordForm resetPasswordForm, BindingResult result);
+
+	public User findOne(long userId);
 	
 }

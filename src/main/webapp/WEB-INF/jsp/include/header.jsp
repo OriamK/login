@@ -63,7 +63,7 @@
 				</a>
 					<ul class="dropdown-menu">
 						<li><a href="/admin"> <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> Administrador</a></li> 
-						<li><a href="/user/<sec:authentication
+						<li><a href="/users/<sec:authentication
 							property="principal.user.id" />"> <span class="glyphicon glyphicon-user" aria-hidden="true"></span> Cuenta</a></li>
 						<li><c:url var="logoutUrl" value="/logout" /> <form:form
 								id="logoutForm" action="${logoutUrl}" method="post"></form:form>
