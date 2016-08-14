@@ -111,6 +111,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 				"incorrect", "verification code");
 
 		user.getRoles().remove(Role.UNVERIFIED);
+		user.getRoles().add(Role.VERIFIED);
 		user.setVerificationCode(null);
 		userRepository.save(user);
 	}
@@ -120,9 +121,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			throws UsernameNotFoundException {
 
 		User user = userRepository.findByEmail(username);
-		logger.info("Usuario " + user);
+		logger.info("Usuario logeandose " + user);
 		if (user == null) {
-			throw new UsernameNotFoundException(username);
+			throw new UsernameNotFoundException("asdasdasd");
 		}
 
 		return new UserDetailsImpl(user);

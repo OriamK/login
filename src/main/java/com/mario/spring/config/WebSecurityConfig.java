@@ -25,6 +25,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Value("${rememberMe.privateKey}")
 	private String rememberMeKey;
 	
+	@Value("${spring.profiles.active}")
+	private String profile;
 	
 	@Autowired
 	private UserDetailsService userService;		
@@ -58,7 +60,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		
 	}
 	
-
 	@Autowired
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth)

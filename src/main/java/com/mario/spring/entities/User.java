@@ -31,7 +31,7 @@ public class User {
 	public static final int PASSWORD_MAX = 30;
 
 	public static enum Role {
-		UNVERIFIED, BLOCKED, ADMIN
+		UNVERIFIED, BLOCKED, ADMIN, VERIFIED
 	}
 	
 	@Id
